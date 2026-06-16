@@ -58,7 +58,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:300;background:var(--dark);borde
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 .hero-title{font-size:clamp(20px,7vw,44px);color:var(--yellow);text-shadow:3px 3px 0 var(--yellow2),5px 5px 0 #2a2000;letter-spacing:3px;margin-bottom:6px;line-height:1.2}
 .hero-sub{font-size:clamp(10px,3vw,16px);color:var(--cyan);text-shadow:2px 2px 0 var(--cyan2);letter-spacing:5px;margin-bottom:14px}
+.hero-socials{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+.social-btn{font-family:'Press Start 2P',monospace;font-size:7px;padding:10px 16px;text-decoration:none;display:inline-block;letter-spacing:1px;border:3px solid;transition:transform .08s}
 .hero-tag{font-size:7px;color:var(--white);opacity:.65;margin-bottom:26px;line-height:2.2}
+
 .btn-row{display:flex;gap:10px;justify-content:center;flex-direction:column;align-items:center;width:100%}
 @media(min-width:400px){.btn-row{flex-direction:row;flex-wrap:wrap}}
 .btn{font-family:'Press Start 2P',monospace;font-size:8px;padding:13px 0;border:none;cursor:pointer;text-decoration:none;display:block;letter-spacing:1px;width:200px;text-align:center}
@@ -66,6 +69,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:300;background:var(--dark);borde
 .btn-buy:active{transform:translateY(4px);box-shadow:none}
 .btn-enter{background:var(--cyan);color:var(--dark);box-shadow:0 4px 0 var(--cyan2)}
 .btn-enter:active{transform:translateY(4px);box-shadow:none}
+.btn-x{background:#111;color:#fff;box-shadow:0 4px 0 #000;border:3px solid #fff}
+.btn-x:active{transform:translateY(4px);box-shadow:none}
 .mq-wrap{background:var(--green);color:var(--dark);padding:7px 0;overflow:hidden;white-space:nowrap;border-top:3px solid var(--dark);border-bottom:3px solid var(--dark)}
 .mq-inner{display:inline-block;animation:mq 22s linear infinite;font-size:7px;letter-spacing:2px}
 @keyframes mq{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
@@ -194,6 +199,9 @@ footer{background:var(--dark);border-top:4px solid var(--green);padding:32px 14p
     <div class="btn-row">
       <a href="#" class="btn btn-buy">&#9654; BUY $LURK</a>
       <a href="#game" class="btn btn-enter">ENTER VERDANEX</a>
+    </div>
+    <div class="btn-row" style="margin-top:10px">
+      <a href="https://x.com/pixelurk_fun" target="_blank" class="btn btn-x">&#120143; @PIXELURK_FUN</a>
     </div>
   </div>
   <canvas id="hero-grass"></canvas>
