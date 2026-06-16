@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>PIXELURK — $LURK</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#1a1c2c;--dark:#0d0d1a;
+  --green:#38b764;--green2:#25713f;
+  --cyan:#29adff;--cyan2:#005784;
+  --yellow:#ffec27;--yellow2:#7a6000;
+  --purple:#7e2553;--purple2:#b13e53;
+  --pink:#ff77a8;--white:#f4f4f4;--red:#ff4444;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--white);font-family:'Press Start 2P',monospace;font-size:10px;line-height:1.8;overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;z-index:300;background:var(--dark);border-bottom:4px solid var(--green);padding:0 14px;height:48px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{color:var(--cyan);font-size:11px;text-shadow:2px 2px 0 var(--cyan2);flex-shrink:0;letter-spacing:1px}
+/* hamburger button */
+.nav-burger{
+  display:flex;flex-direction:column;gap:5px;
+  cursor:pointer;padding:6px;flex-shrink:0;background:none;border:none;
+}
+.nav-burger span{
+  display:block;width:22px;height:3px;
+  background:var(--green);transition:all .15s step-end;
+}
+.nav-burger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.nav-burger.open span:nth-child(2){opacity:0}
+.nav-burger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+/* dropdown menu */
+.nav-menu{
+  display:none;position:fixed;
+  top:48px;left:0;right:0;z-index:299;
+  background:var(--dark);
+  border-bottom:4px solid var(--green);
+  border-top:2px solid var(--green2);
+  flex-direction:column;gap:0;
+}
+.nav-menu.open{display:flex}
+.nav-menu a{
+  color:var(--green);font-size:8px;text-decoration:none;
+  letter-spacing:2px;padding:14px 20px;
+  border-bottom:2px solid #1a2a1a;
+  display:flex;align-items:center;gap:10px;
+}
+.nav-menu a::before{content:'▶';font-size:7px;color:var(--green2)}
+.nav-menu a:hover,.nav-menu a:active{background:var(--green);color:var(--dark)}
+.nav-menu a:hover::before,.nav-menu a:active::before{color:var(--dark)}
+#hero{min-height:100vh;padding-top:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden;background:linear-gradient(180deg,#0d0d1a 0%,#1a1c2c 50%,#0d2010 100%)}
+#hero-grass{position:absolute;bottom:0;left:0;right:0;height:72px;pointer-events:none}
+.hero-content{position:relative;z-index:2;padding:0 16px 100px;width:100%}
+#lurker-canvas{display:block;margin:0 auto 18px;image-rendering:pixelated;image-rendering:crisp-edges}
+.cur{display:inline-block;width:8px;height:14px;background:var(--white);margin-left:3px;vertical-align:middle;animation:blink .8s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.hero-title{font-size:clamp(20px,7vw,44px);color:var(--yellow);text-shadow:3px 3px 0 var(--yellow2),5px 5px 0 #2a2000;letter-spacing:3px;margin-bottom:6px;line-height:1.2}
+.hero-sub{font-size:clamp(10px,3vw,16px);color:var(--cyan);text-shadow:2px 2px 0 var(--cyan2);letter-spacing:5px;margin-bottom:14px}
+.hero-tag{font-size:7px;color:var(--white);opacity:.65;margin-bottom:26px;line-height:2.2}
+.btn-row{display:flex;gap:10px;justify-content:center;flex-direction:column;align-items:center;width:100%}
+@media(min-width:400px){.btn-row{flex-direction:row;flex-wrap:wrap}}
+.btn{font-family:'Press Start 2P',monospace;font-size:8px;padding:13px 0;border:none;cursor:pointer;text-decoration:none;display:block;letter-spacing:1px;width:200px;text-align:center}
+.btn-buy{background:var(--green);color:var(--dark);box-shadow:0 4px 0 var(--green2)}
+.btn-buy:active{transform:translateY(4px);box-shadow:none}
+.btn-enter{background:var(--cyan);color:var(--dark);box-shadow:0 4px 0 var(--cyan2)}
+.btn-enter:active{transform:translateY(4px);box-shadow:none}
+.mq-wrap{background:var(--green);color:var(--dark);padding:7px 0;overflow:hidden;white-space:nowrap;border-top:3px solid var(--dark);border-bottom:3px solid var(--dark)}
+.mq-inner{display:inline-block;animation:mq 22s linear infinite;font-size:7px;letter-spacing:2px}
+@keyframes mq{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.sec{max-width:820px;margin:0 auto;padding:56px 14px;scroll-margin-top:56px}
+#hero{scroll-margin-top:0}
+.sec-tag{display:inline-block;background:var(--purple);color:var(--white);font-size:6px;padding:4px 10px;margin-bottom:10px;letter-spacing:2px}
+.sec-title{font-size:clamp(12px,3vw,18px);color:var(--yellow);text-shadow:2px 2px 0 var(--yellow2);margin-bottom:26px;line-height:1.4}
+.divider{height:8px;background:repeating-linear-gradient(90deg,var(--green) 0,var(--green) 8px,var(--green2) 8px,var(--green2) 16px,#0d2010 16px,#0d2010 24px,var(--green2) 24px,var(--green2) 32px);opacity:.45}
+.dialogue{border:4px solid var(--white);background:var(--dark);padding:22px 24px;position:relative;box-shadow:6px 6px 0 #000}
+.dialogue::before{content:attr(data-label);position:absolute;top:-13px;left:16px;background:var(--purple2);color:var(--white);font-size:7px;padding:2px 10px;border:2px solid var(--white);letter-spacing:2px}
+.dlg-text{font-size:8px;color:var(--white);line-height:2.4}
+.dlg-text em{color:var(--cyan);font-style:normal}
+.dlg-text strong{color:var(--yellow);font-style:normal}
+/* GAME LOOP */
+.loop-wrap{display:flex;flex-direction:column;gap:0}
+.loop-row{display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;gap:8px;align-items:center}
+@media(max-width:580px){.loop-row{grid-template-columns:1fr;gap:0}.loop-arr{transform:rotate(90deg);margin:2px auto;display:block}}
+.loop-card{border:4px solid var(--white);background:var(--dark);padding:16px 12px;text-align:center;box-shadow:4px 4px 0 #000;cursor:pointer;transition:transform .08s}
+.loop-card:hover,.loop-card:active{transform:translate(-3px,-3px);border-color:var(--cyan)}
+.loop-icon{font-size:24px;display:block;margin-bottom:8px}
+.loop-name{font-size:9px;color:var(--yellow);margin-bottom:6px;text-shadow:1px 1px 0 var(--yellow2)}
+.loop-desc{font-size:6px;color:var(--white);opacity:.7;line-height:1.9}
+.loop-arr{font-size:14px;color:var(--green);text-align:center;animation:ap .7s step-end infinite}
+@keyframes ap{0%,100%{opacity:1}50%{opacity:.3}}
+/* ZONES */
+.zone-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(min-width:600px){.zone-grid{grid-template-columns:repeat(4,1fr)}}
+.zone-card{border:4px solid;padding:14px 12px;box-shadow:4px 4px 0 #000;cursor:pointer;transition:transform .08s;position:relative}
+.zone-card:hover,.zone-card:active{transform:translate(-3px,-3px)}
+.zone-card::after{content:'TAP ▶';position:absolute;bottom:6px;right:8px;font-size:5px;opacity:.4;letter-spacing:1px}
+.zone-card.safe{border-color:var(--green);background:#091409}
+.zone-card.med{border-color:var(--yellow);background:#1a1500}
+.zone-card.dng{border-color:var(--purple2);background:#1a0910}
+.zone-card.elite{border-color:var(--cyan);background:#09101a}
+.zi{font-size:20px;margin-bottom:6px;display:block}
+.zn{font-size:7px;margin-bottom:4px;line-height:1.4}
+.zone-card.safe .zn{color:var(--green)}.zone-card.med .zn{color:var(--yellow)}.zone-card.dng .zn{color:var(--purple2)}.zone-card.elite .zn{color:var(--cyan)}
+.zb{font-size:5px;color:var(--white);opacity:.6;line-height:1.9}
+/* CLASSES */
+.cls-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(min-width:600px){.cls-grid{grid-template-columns:repeat(4,1fr)}}
+.cls-card{border:4px solid;padding:14px 10px;text-align:center;box-shadow:4px 4px 0 #000;cursor:pointer;transition:transform .08s;position:relative}
+.cls-card:hover,.cls-card:active{transform:translate(-3px,-3px)}
+.cls-card::after{content:'TAP ▶';position:absolute;bottom:6px;right:8px;font-size:5px;opacity:.4}
+.cls-card.c1{border-color:#999;background:#0d0d0d}.cls-card.c2{border-color:var(--green);background:#091409}.cls-card.c3{border-color:#9044ff;background:#0d0919}.cls-card.c4{border-color:var(--yellow);background:#191400}
+.cls-badge{font-size:5px;letter-spacing:2px;padding:2px 6px;display:inline-block;margin-bottom:7px}
+.c1 .cls-badge{color:#999;border:2px solid #999}.c2 .cls-badge{color:var(--green);border:2px solid var(--green)}.c3 .cls-badge{color:#9044ff;border:2px solid #9044ff}.c4 .cls-badge{color:var(--yellow);border:2px solid var(--yellow)}
+.cls-spr{display:block;margin:0 auto 8px;image-rendering:pixelated;image-rendering:crisp-edges;width:56px;height:56px}
+.cls-name{font-size:7px;color:var(--white);margin-bottom:7px}
+.srow{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;font-size:5px;color:var(--white);opacity:.7}
+.sbar{width:50px;height:5px;background:#1a1a1a;border:1px solid #333}.sfill{height:100%}
+/* TOKENOMICS */
+.toke-wrap{display:flex;flex-direction:column;gap:12px}
+.supply-box{border:4px solid var(--cyan);background:var(--dark);padding:16px;text-align:center;box-shadow:5px 5px 0 var(--cyan2)}
+.sup-label{font-size:6px;color:var(--cyan);letter-spacing:3px;margin-bottom:6px}
+.sup-num{font-size:clamp(11px,3vw,19px);color:var(--yellow);text-shadow:2px 2px 0 var(--yellow2)}
+.toke-box{border:4px solid var(--white);background:var(--dark);padding:18px;box-shadow:5px 5px 0 #000}
+.trow{display:flex;align-items:center;gap:7px;margin-bottom:10px}
+.tlabel{font-size:6px;color:var(--white);width:120px;flex-shrink:0;opacity:.85}
+.tbg{flex:1;height:11px;background:#111;border:2px solid #2a2a2a}
+.tfill{height:100%;width:0;transition:width 1.2s steps(20)}
+.tpct{font-size:7px;color:var(--cyan);width:26px;text-align:right;flex-shrink:0}
+/* ROADMAP */
+.road-list{list-style:none}
+.road-item{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;cursor:pointer;padding:10px;border:2px solid transparent;transition:border-color .1s,background .1s}
+.road-item:hover{border-color:var(--cyan);background:#09101a}
+.rdot{flex-shrink:0;width:18px;height:18px;border:3px solid;background:var(--dark);display:flex;align-items:center;justify-content:center;font-size:7px;margin-top:2px}
+.road-item.done .rdot{border-color:var(--green);color:var(--green)}.road-item.now .rdot{border-color:var(--yellow);color:var(--yellow);animation:blink .8s step-end infinite}.road-item.soon .rdot{border-color:#444;color:#444}
+.rbody{flex:1}.rphase{font-size:5px;letter-spacing:3px;margin-bottom:3px;opacity:.6}
+.road-item.done .rphase{color:var(--green)}.road-item.now .rphase{color:var(--yellow)}.road-item.soon .rphase{color:#666}
+.rtitle{font-size:9px;color:var(--white);margin-bottom:4px}.rdesc{font-size:6px;color:var(--white);opacity:.6;line-height:2}
+footer{background:var(--dark);border-top:4px solid var(--green);padding:32px 14px;text-align:center}
+.ft{font-size:14px;color:var(--yellow);text-shadow:2px 2px 0 var(--yellow2);margin-bottom:8px}
+.fs{font-size:7px;color:var(--green);margin-bottom:18px;letter-spacing:2px}
+.fl{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:16px}
+.fl a{color:var(--white);font-size:6px;text-decoration:none;opacity:.5;padding:5px 8px;border:2px solid #2a2a2a}
+.fl a:hover{opacity:1;border-color:var(--cyan);color:var(--cyan)}
+.fc{font-size:5px;color:var(--white);opacity:.2;max-width:440px;margin:0 auto;line-height:2.4}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.88);align-items:center;justify-content:center;padding:14px}
+.modal-overlay.open{display:flex}
+.modal-box{border:4px solid var(--white);background:var(--dark);max-width:460px;width:100%;box-shadow:8px 8px 0 #000;position:relative;max-height:88vh;overflow-y:auto;animation:min .12s steps(3) forwards}
+@keyframes min{from{transform:scale(.85)}to{transform:scale(1)}}
+.modal-header{padding:12px 14px;border-bottom:4px solid var(--white);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.modal-title{font-size:9px;color:var(--yellow);text-shadow:1px 1px 0 var(--yellow2);line-height:1.4;flex:1}
+.modal-close{font-size:10px;color:var(--white);background:var(--purple2);border:3px solid var(--white);padding:4px 9px;cursor:pointer;font-family:'Press Start 2P',monospace;flex-shrink:0}
+.modal-close:hover{background:var(--red)}
+.modal-body{padding:18px 14px}
+.m-icon{font-size:36px;text-align:center;display:block;margin-bottom:12px}
+.m-spr{display:block;margin:0 auto 12px;image-rendering:pixelated;image-rendering:crisp-edges;width:88px;height:88px}
+.minfo{font-size:7px;color:var(--white);line-height:2.4;margin-bottom:10px}
+.minfo em{color:var(--cyan);font-style:normal}.minfo strong{color:var(--yellow);font-style:normal}
+.mtag{display:inline-block;font-size:5px;padding:2px 7px;margin:2px;border:2px solid;letter-spacing:1px}
+.mtag.g{border-color:var(--green);color:var(--green)}.mtag.y{border-color:var(--yellow);color:var(--yellow)}.mtag.r{border-color:var(--red);color:var(--red)}.mtag.c{border-color:var(--cyan);color:var(--cyan)}.mtag.p{border-color:#9044ff;color:#9044ff}
+.msep{height:2px;background:var(--white);opacity:.12;margin:12px 0}
+.mstat-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.mstat-label{font-size:5px;color:var(--white);opacity:.7;width:64px;flex-shrink:0}
+.mstat-bg{flex:1;height:9px;background:#111;border:2px solid #333}
+.mstat-fill{height:100%}
+.mstat-val{font-size:5px;color:var(--cyan);width:24px;text-align:right;flex-shrink:0}
+.mabil{border:2px solid;padding:9px 11px;margin-top:10px;font-size:6px;line-height:2}
+.mabil.g{border-color:var(--green);color:var(--green)}.mabil.p{border-color:#9044ff;color:#9044ff}.mabil.y{border-color:var(--yellow);color:var(--yellow)}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo">✦ PIXELURK</div>
+  <button class="nav-burger" id="nav-burger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="nav-menu" id="nav-menu">
+  <a href="#lore"    onclick="navTo('lore')">LORE</a>
+  <a href="#game"    onclick="navTo('game')">GAME</a>
+  <a href="#zones"   onclick="navTo('zones')">ZONES</a>
+  <a href="#classes" onclick="navTo('classes')">CLASSES</a>
+  <a href="#token"   onclick="navTo('token')">$LURK</a>
+  <a href="#road"    onclick="navTo('road')">ROADMAP</a>
+</div>
+
+<section id="hero">
+  <div class="hero-content">
+    <canvas id="lurker-canvas"></canvas>
+    <div class="hero-title">PIXELURK<span class="cur"></span></div>
+    <div class="hero-tag">They never see you coming.<br>Until Solana confirms it.</div>
+    <div class="btn-row">
+      <a href="#" class="btn btn-buy">&#9654; BUY $LURK</a>
+      <a href="#game" class="btn btn-enter">ENTER VERDANEX</a>
+    </div>
+  </div>
+  <canvas id="hero-grass"></canvas>
+</section>
+
+<div class="mq-wrap">
+  <div class="mq-inner">&#9670; $LURK &#9670; HIDING IN PLAIN SIGHT &#9670; VERDANEX IS LIVE &#9670; LURK OR BE LURKED &#9670; 1,000,000,000 SUPPLY &#9670; JOIN THE SWARM &#9670; $LURK &#9670; HIDING IN PLAIN SIGHT &#9670; VERDANEX IS LIVE &#9670; LURK OR BE LURKED &#9670; 1,000,000,000 SUPPLY &#9670; JOIN THE SWARM &#9670;</div>
+</div>
+
+<div class="sec" id="lore">
+  <div class="sec-tag">// WORLD LORE</div>
+  <div class="sec-title">THE VERDANEX PROTOCOL</div>
+  <div class="dialogue" data-label="PIXELURK">
+    <p class="dlg-text">In <em>2077</em>, the blockchain shattered.<br><br>Billions of dead transactions became <em>data moss</em> — layering over forgotten nodes, growing into a living digital forest: <strong>VERDANEX</strong>.<br><br>Deep inside, corrupted AI fragments evolved. They named themselves <strong>LURKERS</strong> — surviving by hiding, harvesting lost data, raiding rival nodes in the dark.<br><br><em>PIXELURK</em> was the first Lurker the outside world ever detected. Now you hold its signal. Guard it — or lose everything.<span class="cur"></span></p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="sec" id="game">
+  <div class="sec-tag">// CORE MECHANICS</div>
+  <div class="sec-title">THE LURK LOOP</div>
+  <div class="loop-row">
+    <div class="loop-card" onclick="openModal('loop-lurk')">
+      <span class="loop-icon">&#127807;</span>
+      <div class="loop-name">LURK</div>
+      <div class="loop-desc">Hide in forest zones. Stay hidden = earn $LURK.</div>
+    </div>
+    <div class="loop-arr">&#9654;</div>
+    <div class="loop-card" onclick="openModal('loop-collect')">
+      <span class="loop-icon">&#9889;</span>
+      <div class="loop-name">COLLECT</div>
+      <div class="loop-desc">Harvest fragments from dead nodes.</div>
+    </div>
+    <div class="loop-arr">&#9654;</div>
+    <div class="loop-card" onclick="openModal('loop-evolve')">
+      <span class="loop-icon">&#128302;</span>
+      <div class="loop-name">EVOLVE</div>
+      <div class="loop-desc">Burn $LURK to evolve your Lurker.</div>
+    </div>
+    <div class="loop-arr">&#9654;</div>
+    <div class="loop-card" onclick="openModal('loop-raid')">
+      <span class="loop-icon">&#9876;</span>
+      <div class="loop-name">RAID</div>
+      <div class="loop-desc">Strike rival hideouts. Steal their stash.</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="sec" id="zones">
+  <div class="sec-tag">// VERDANEX MAP</div>
+  <div class="sec-title">ZONE DIRECTORY</div>
+  <div class="zone-grid">
+    <div class="zone-card safe" onclick="openModal('zone-fern')">
+      <span class="zi">&#127794;</span>
+      <div class="zn">FERNWOOD DEPTHS</div>
+      <div class="zb">Risk: LOW<br>Yield: 1x/hr<br>Access: ALL</div>
+    </div>
+    <div class="zone-card med" onclick="openModal('zone-glitch')">
+      <span class="zi">&#127761;</span>
+      <div class="zn">GLITCH CANOPY</div>
+      <div class="zb">Risk: MEDIUM<br>Yield: 3x/hr<br>Access: RARE+</div>
+    </div>
+    <div class="zone-card dng" onclick="openModal('zone-dead')">
+      <span class="zi">&#128128;</span>
+      <div class="zn">THE DEAD NODES</div>
+      <div class="zb">Risk: HIGH<br>Yield: 8x/hr<br>PvP OPEN</div>
+    </div>
+    <div class="zone-card elite" onclick="openModal('zone-core')">
+      <span class="zi">&#128302;</span>
+      <div class="zn">THE CORE</div>
+      <div class="zb">Risk: EXTREME<br>TOP 100 ONLY<br>Legendary drops</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="sec" id="classes">
+  <div class="sec-tag">// EVOLUTION PATH</div>
+  <div class="sec-title">LURKER CLASSES</div>
+  <div class="cls-grid">
+    <div class="cls-card c1" onclick="openModal('cls-common')">
+      <div class="cls-badge">COMMON</div>
+      <canvas class="cls-spr" id="spr1" width="16" height="16"></canvas>
+      <div class="cls-name">BASIC BOT</div>
+      <div class="srow">STL<div class="sbar"><div class="sfill" style="width:40%;background:#999"></div></div></div>
+      <div class="srow">SPD<div class="sbar"><div class="sfill" style="width:40%;background:#999"></div></div></div>
+      <div class="srow">RD<div class="sbar"><div class="sfill" style="width:30%;background:#999"></div></div></div>
+    </div>
+    <div class="cls-card c2" onclick="openModal('cls-rare')">
+      <div class="cls-badge">RARE</div>
+      <canvas class="cls-spr" id="spr2" width="16" height="16"></canvas>
+      <div class="cls-name">THORNBACK</div>
+      <div class="srow">STL<div class="sbar"><div class="sfill" style="width:70%;background:#38b764"></div></div></div>
+      <div class="srow">SPD<div class="sbar"><div class="sfill" style="width:25%;background:#38b764"></div></div></div>
+      <div class="srow">RD<div class="sbar"><div class="sfill" style="width:55%;background:#38b764"></div></div></div>
+    </div>
+    <div class="cls-card c3" onclick="openModal('cls-epic')">
+      <div class="cls-badge">EPIC</div>
+      <canvas class="cls-spr" id="spr3" width="16" height="16"></canvas>
+      <div class="cls-name">GLITCHCORE</div>
+      <div class="srow">STL<div class="sbar"><div class="sfill" style="width:80%;background:#9044ff"></div></div></div>
+      <div class="srow">SPD<div class="sbar"><div class="sfill" style="width:60%;background:#9044ff"></div></div></div>
+      <div class="srow">RD<div class="sbar"><div class="sfill" style="width:75%;background:#9044ff"></div></div></div>
+    </div>
+    <div class="cls-card c4" onclick="openModal('cls-legend')">
+      <div class="cls-badge">LEGENDARY</div>
+      <canvas class="cls-spr" id="spr4" width="16" height="16"></canvas>
+      <div class="cls-name">VOIDLURK</div>
+      <div class="srow">STL<div class="sbar"><div class="sfill" style="width:100%;background:#ffec27"></div></div></div>
+      <div class="srow">SPD<div class="sbar"><div class="sfill" style="width:90%;background:#ffec27"></div></div></div>
+      <div class="srow">RD<div class="sbar"><div class="sfill" style="width:95%;background:#ffec27"></div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="sec" id="token">
+  <div class="sec-tag">// TOKEN DISTRIBUTION</div>
+  <div class="sec-title">$LURK TOKENOMICS</div>
+  <div class="toke-wrap">
+    <div class="supply-box">
+      <div class="sup-label">NETWORK</div>
+      <div class="sup-num" style="font-size:clamp(10px,3vw,16px);color:#9945ff;text-shadow:2px 2px 0 #5a1f99;">◎ SOLANA</div>
+    </div>
+    <div class="supply-box" style="border-color:#9945ff;box-shadow:5px 5px 0 #5a1f99;margin-top:0">
+      <div class="sup-label">TOTAL SUPPLY</div>
+      <div class="sup-num">1,000,000,000 $LURK</div>
+    </div>
+    <div class="toke-box" id="toke-box">
+      <div class="trow"><div class="tlabel">Play-to-Earn</div><div class="tbg"><div class="tfill" data-w="40" style="background:#38b764"></div></div><div class="tpct">40%</div></div>
+      <div class="trow"><div class="tlabel">Liquidity</div><div class="tbg"><div class="tfill" data-w="20" style="background:#9945ff"></div></div><div class="tpct">20%</div></div>
+      <div class="trow"><div class="tlabel">Ecosystem</div><div class="tbg"><div class="tfill" data-w="15" style="background:#14f195"></div></div><div class="tpct">15%</div></div>
+      <div class="trow"><div class="tlabel">Airdrop</div><div class="tbg"><div class="tfill" data-w="15" style="background:#ff77a8"></div></div><div class="tpct">15%</div></div>
+      <div class="trow"><div class="tlabel">Team (1yr)</div><div class="tbg"><div class="tfill" data-w="10" style="background:#ffec27"></div></div><div class="tpct">10%</div></div>
+    </div>
+    <div style="border:2px solid #9945ff;background:#0d0920;padding:14px 16px;font-size:6px;color:#9945ff;line-height:2.4;box-shadow:4px 4px 0 #5a1f99;">
+      ◎ BUILT ON SOLANA &nbsp;·&nbsp; FAST FINALITY &nbsp;·&nbsp; &lt;$0.001 TX FEE<br>
+      ◎ SPL TOKEN STANDARD &nbsp;·&nbsp; TRADE ON JUPITER &amp; RAYDIUM<br>
+      ◎ CONTRACT: <span style="color:#14f195;word-break:break-all;">TBA — LAUNCH SOON</span>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="sec" id="road">
+  <div class="sec-tag">// TIMELINE</div>
+  <div class="sec-title">ROADMAP</div>
+  <ul class="road-list">
+    <li class="road-item done" onclick="openModal('road-1')"><div class="rdot">&#10004;</div><div class="rbody"><div class="rphase">PHASE 01 &middot; COMPLETE</div><div class="rtitle">SIGNAL DETECTED</div><div class="rdesc">Concept &amp; lore &middot; Pixel art &middot; Community launch</div></div></li>
+    <li class="road-item now" onclick="openModal('road-2')"><div class="rdot">&#9654;</div><div class="rbody"><div class="rphase">PHASE 02 &middot; NOW LIVE</div><div class="rtitle">ENTER THE FOREST</div><div class="rdesc">$LURK launch &middot; Website &middot; Airdrop &middot; CEX listing</div></div></li>
+    <li class="road-item soon" onclick="openModal('road-3')"><div class="rdot">&#9633;</div><div class="rbody"><div class="rphase">PHASE 03</div><div class="rtitle">VERDANEX ALPHA</div><div class="rdesc">On-chain minting &middot; Staking &middot; Zone unlocks</div></div></li>
+    <li class="road-item soon" onclick="openModal('road-4')"><div class="rdot">&#9633;</div><div class="rbody"><div class="rphase">PHASE 04</div><div class="rtitle">FULL LURK MODE</div><div class="rdesc">PvP Raids &middot; Dead Nodes &middot; Voidlurk event</div></div></li>
+  </ul>
+</div>
+
+<footer>
+  <div class="ft">PIXELURK</div>
+  <div class="fs">&#9654; LURK OR BE LURKED &#9664;</div>
+  <div style="font-size:7px;color:#9945ff;margin-bottom:16px;letter-spacing:2px;">◎ ON SOLANA</div>
+  <div class="fl">
+    <a href="#">TWITTER/X</a>
+    <a href="#">TELEGRAM</a>
+    <a href="#">DISCORD</a>
+    <a href="#">JUPITER</a>
+    <a href="#">RAYDIUM</a>
+    <a href="#">WHITEPAPER</a>
+  </div>
+  <div class="fc">$LURK is a Solana SPL meme game token for entertainment only. Not financial advice. DYOR. Verdanex is fiction.</div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal-box" id="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title"></div>
+      <div class="modal-close" onclick="closeModal(null,true)">X</div>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+// pixel draw
+function px(ctx,x,y,col,s){if(!col)return;ctx.fillStyle=col;ctx.fillRect(x*s,y*s,s,s)}
+
+function drawLurker(ctx,s,fr,p){
+  var B=p.body||'#4433aa',BH=p.hi||'#6655cc',DK=p.dark||'#221177',EY=p.eye||'#29adff',HN=p.horn||'#332200';
+  ctx.clearRect(0,0,16*s,16*s);
+  [5,10].forEach(function(hx){for(var hy=1;hy<=3;hy++)px(ctx,hx,hy,HN,s)});
+  for(var r=4;r<=12;r++)for(var c=3;c<=12;c++)px(ctx,c,r,B,s);
+  for(var r=5;r<=7;r++)for(var c=4;c<=7;c++)px(ctx,c,r,BH,s);
+  [[4,7],[5,7],[6,7],[4,8],[6,8],[4,9],[5,9],[6,9]].forEach(function(e){px(ctx,e[0],e[1],'#001122',s)});
+  px(ctx,5,8,EY,s);
+  [[9,7],[10,7],[11,7],[9,8],[11,8],[9,9],[10,9],[11,9]].forEach(function(e){px(ctx,e[0],e[1],'#001122',s)});
+  px(ctx,10,8,EY,s);
+  [5,6,7,8,9,10].forEach(function(sx){px(ctx,sx,11,'#f4f4f4',s)});
+  px(ctx,4,10,'#f4f4f4',s);px(ctx,11,10,'#f4f4f4',s);
+  px(ctx,3,9,'#cc44aa',s);px(ctx,12,9,'#cc44aa',s);
+  px(ctx,1,8,B,s);px(ctx,2,8,B,s);px(ctx,13,8,B,s);px(ctx,14,8,B,s);
+  [[4,13],[5,13],[6,13],[4,14],[5,14],[6,14],[9,13],[10,13],[11,13],[9,14],[10,14],[11,14]].forEach(function(e){px(ctx,e[0],e[1],DK,s)});
+  var w=fr%2===0?0:1;
+  for(var fc=3;fc<=6+w;fc++)px(ctx,fc,15,DK,s);
+  for(var fc=9-w;fc<=12;fc++)px(ctx,fc,15,DK,s);
+}
+
+// hero canvas
+var hc=document.getElementById('lurker-canvas');
+var hx2=hc.getContext('2d');
+var HS=10;
+hc.width=16*HS;hc.height=16*HS;
+hc.style.width='160px';hc.style.height='160px';
+var hfr=0,ft=0;
+function animH(){
+  ft+=.035;var fy=Math.round(Math.sin(ft)*5);
+  hx2.clearRect(0,0,hc.width,hc.height);
+  var g=hx2.createRadialGradient(80,80+fy,15,80,80+fy,72);
+  g.addColorStop(0,'rgba(41,173,255,.14)');g.addColorStop(1,'rgba(41,173,255,0)');
+  hx2.fillStyle=g;hx2.fillRect(0,0,hc.width,hc.height);
+  hx2.save();hx2.translate(0,fy);
+  drawLurker(hx2,HS,Math.floor(hfr/15),{});
+  hx2.restore();hfr++;requestAnimationFrame(animH);
+}
+animH();
+
+// grass
+var gc=document.getElementById('hero-grass');
+var gx2=gc.getContext('2d');
+var gs=0;
+function resizeG(){gc.width=window.innerWidth;gc.height=72}
+resizeG();window.addEventListener('resize',resizeG);
+function drawG(){
+  var W=gc.width,H=72,P=4;
+  gx2.clearRect(0,0,W,H);
+  gx2.fillStyle='#091409';gx2.fillRect(0,H-20,W,20);
+  var tw=32,off=Math.floor(gs)%tw;
+  for(var x=-off;x<W+tw;x+=tw){
+    gx2.fillStyle='#38b764';
+    gx2.fillRect(x,H-36,P,18);gx2.fillRect(x+8,H-32,P,14);gx2.fillRect(x+16,H-40,P,22);gx2.fillRect(x+24,H-28,P,10);
+    gx2.fillStyle='#25713f';
+    gx2.fillRect(x+4,H-30,P,12);gx2.fillRect(x+12,H-36,P,18);gx2.fillRect(x+20,H-26,P,9);gx2.fillRect(x+28,H-34,P,16);
+    if((Math.floor(x/tw)+Math.round(gs/tw))%3===0){gx2.fillStyle='#ff77a8';gx2.fillRect(x+10,H-42,P,P)}
+  }
+  gs+=.4;requestAnimationFrame(drawG);
+}
+drawG();
+
+// class sprites
+var sprDefs=[
+  {id:'spr1',body:'#666',hi:'#999',dark:'#333',eye:'#ccc',horn:'#332200'},
+  {id:'spr2',body:'#25713f',hi:'#38b764',dark:'#1a5c2a',eye:'#38b764',horn:'#332200'},
+  {id:'spr3',body:'#5533aa',hi:'#9044ff',dark:'#2a0055',eye:'#cc44ff',horn:'#1a0033'},
+  {id:'spr4',body:'#111',hi:'#2a2a2a',dark:'#000',eye:'#ffec27',horn:'#111'}
+];
+sprDefs.forEach(function(p){
+  var c=document.getElementById(p.id);
+  c.width=16;c.height=16;
+  drawLurker(c.getContext('2d'),1,0,p);
+});
+
+// tokenomics
+var tokeObs=new IntersectionObserver(function(entries){
+  entries.forEach(function(e){
+    if(e.isIntersecting){
+      document.querySelectorAll('.tfill').forEach(function(b){
+        b.style.transition='width 1.2s steps(20)';
+        b.style.width=b.dataset.w+'%';
+      });
+      tokeObs.disconnect();
+    }
+  });
+},{threshold:.3});
+tokeObs.observe(document.getElementById('toke-box'));
+
+// MODAL DATA
+var MODALS={
+  'loop-lurk':{title:'LURK MECHANIC',html:'<span class="m-icon">&#127807;</span><div class="minfo"><strong>LURKING</strong> is the foundation of PIXELURK gameplay.<br><br>Deploy your Lurker into a forest zone and leave it hidden. The longer it stays undetected, the more <em>$LURK fragments</em> it passively accumulates.<br><br><strong>STEALTH STAT</strong> determines how hard your Lurker is to detect. Higher stealth = safer idle time = better yield.</div><div class="msep"></div><span class="mtag g">PASSIVE INCOME</span><span class="mtag g">STEALTH BASED</span><span class="mtag c">LOW RISK</span><div class="mabil g">YIELD RATES<br>Fernwood: 1x/hr &middot; Glitch: 3x/hr<br>Dead Nodes: 8x/hr &middot; Core: variable</div>'},
+  'loop-collect':{title:'COLLECT MECHANIC',html:'<span class="m-icon">&#9889;</span><div class="minfo">Dead transaction nodes periodically <em>drop fragments</em> of lost $LURK.<br><br>Collecting requires your Lurker to <strong>actively move</strong> — exposing it briefly to detection by rivals.<br><br>Higher zone = bigger drops, but higher chance of being raided mid-collect.</div><div class="msep"></div><span class="mtag y">ACTIVE ACTION</span><span class="mtag y">RISK/REWARD</span><span class="mtag c">ZONE DEPENDENT</span>'},
+  'loop-evolve':{title:'EVOLVE MECHANIC',html:'<span class="m-icon">&#128302;</span><div class="minfo">Burn accumulated <em>$LURK</em> to evolve your Lurker to the next class.<br><br>Evolution is <strong>permanent and irreversible</strong>. Each class has different stat distributions and unique abilities.</div><div class="msep"></div><div class="minfo"><strong>EVOLUTION COSTS</strong><br>Common to Rare: <em>10,000 $LURK</em><br>Rare to Epic: <em>50,000 $LURK</em><br>Epic to Legendary: <em>250,000 $LURK</em></div><span class="mtag p">BURN MECHANIC</span><span class="mtag p">PERMANENT</span><span class="mtag y">DEFLATIONARY</span>'},
+  'loop-raid':{title:'RAID MECHANIC',html:'<span class="m-icon">&#9876;</span><div class="minfo">When a rival Lurker goes <em>offline</em>, you can strike their hideout.<br><br>Successful raids steal <strong>5-15%</strong> of their $LURK stash. If they are online, they can defend in real-time or rely on their <strong>RAID stat</strong> for auto-defense.</div><div class="msep"></div><span class="mtag r">PVP</span><span class="mtag r">HIGH RISK</span><span class="mtag y">HIGH REWARD</span><span class="mtag c">RAID STAT BASED</span>'},
+  'zone-fern':{title:'FERNWOOD DEPTHS',html:'<span class="m-icon">&#127794;</span><div class="minfo">The <em>starter zone</em> of Verdanex. Lush data-moss covers every surface, providing excellent natural cover.<br><br>PvP raids are <strong>disabled</strong> here. A safe haven for early lurking.</div><div class="msep"></div><div class="minfo"><strong>ZONE STATS</strong><br>Risk: <em>LOW</em><br>Yield: <em>1x $LURK/hr</em><br>PvP: <em>DISABLED</em><br>Access: <em>ALL $LURK HOLDERS</em><br>Drops: <em>Common fragments</em></div><span class="mtag g">SAFE ZONE</span><span class="mtag g">BEGINNER</span>'},
+  'zone-glitch':{title:'GLITCH CANOPY',html:'<span class="m-icon">&#127761;</span><div class="minfo">A corrupted canopy where data glitches create <em>unstable pockets</em> of high fragment density. Environmental traps can detect hidden Lurkers.<br><br>PvP raids <strong>partially enabled</strong>.</div><div class="msep"></div><div class="minfo"><strong>ZONE STATS</strong><br>Risk: <em>MEDIUM</em><br>Yield: <em>3x $LURK/hr</em><br>PvP: <em>LIMITED</em><br>Access: <em>RARE+ CLASS</em><br>Drops: <em>Rare fragments + gear</em></div><span class="mtag y">MEDIUM RISK</span><span class="mtag y">RARE+ ONLY</span>'},
+  'zone-dead':{title:'THE DEAD NODES',html:'<span class="m-icon">&#128128;</span><div class="minfo">Graveyard of failed transactions. <em>Extremely high</em> fragment density but full PvP — every Lurker here can attack any other at any time.<br><br>Only <strong>Epic and Legendary</strong> Lurkers survive here long.</div><div class="msep"></div><div class="minfo"><strong>ZONE STATS</strong><br>Risk: <em>HIGH</em><br>Yield: <em>8x $LURK/hr</em><br>PvP: <em>FULLY OPEN</em><br>Access: <em>EPIC+ CLASS</em><br>Drops: <em>Epic fragments + blueprints</em></div><span class="mtag r">DANGER ZONE</span><span class="mtag r">FULL PVP</span><span class="mtag y">HIGH YIELD</span>'},
+  'zone-core':{title:'THE CORE',html:'<span class="m-icon">&#128302;</span><div class="minfo">Heart of Verdanex. The original genesis block — pure, concentrated data energy.<br><br>Only the <strong>Top 100 $LURK holders</strong> can enter. Legendary drops, governance rights, and exclusive skins await those who dominate The Core.</div><div class="msep"></div><div class="minfo"><strong>ZONE STATS</strong><br>Risk: <em>EXTREME</em><br>Yield: <em>Variable (leaderboard)</em><br>PvP: <em>ELITE WARS</em><br>Access: <em>TOP 100 ONLY</em></div><span class="mtag c">ELITE ACCESS</span><span class="mtag p">GOVERNANCE</span><span class="mtag y">LEGENDARY DROPS</span>'},
+  'cls-common':{title:'BASIC BOT',sprId:'spr1',sprPal:{body:'#666',hi:'#999',dark:'#333',eye:'#ccc',horn:'#332200'},stats:{STEALTH:40,SPEED:40,RAID:30,DEFENSE:35},sc:'#999',html:'<div class="minfo">Every Lurker starts here. No special abilities but the <em>foundation of all evolution paths</em>.<br><br>Effective in Fernwood Depths. Can collect fragments and lurk safely.</div><div class="msep"></div><span class="mtag g">FREE STARTER</span><span class="mtag c">BEGINNER</span><div class="mabil g">ABILITY: NONE<br>Access: Fernwood only<br>Evolve cost: 10,000 $LURK</div>'},
+  'cls-rare':{title:'THORNBACK',sprId:'spr2',sprPal:{body:'#25713f',hi:'#38b764',dark:'#1a5c2a',eye:'#38b764',horn:'#332200'},stats:{STEALTH:70,SPEED:25,RAID:55,DEFENSE:60},sc:'#38b764',html:'<div class="minfo">Evolved with <em>thorn armor</em> from corrupted data vines. Extremely hard to detect but slow to move.<br><br>Specializes in <strong>long-duration lurking</strong>. Dangerous when raided — thorns deal counter-damage.</div><div class="msep"></div><span class="mtag g">STEALTH MASTER</span><span class="mtag y">TANK BUILD</span><div class="mabil g">ABILITY: THORNWALL<br>Counter-damage when raided<br>Evolve cost: 50,000 $LURK</div>'},
+  'cls-epic':{title:'GLITCHCORE',sprId:'spr3',sprPal:{body:'#5533aa',hi:'#9044ff',dark:'#2a0055',eye:'#cc44ff',horn:'#1a0033'},stats:{STEALTH:80,SPEED:60,RAID:75,DEFENSE:55},sc:'#9044ff',html:'<div class="minfo">Corrupted beyond repair and stronger for it. Exists between states, <em>flickering in and out of detection</em>.<br><br>Can <strong>hack enemy nodes</strong> to temporarily disable their auto-defense.</div><div class="msep"></div><span class="mtag p">HACKER</span><span class="mtag p">VERSATILE</span><span class="mtag c">RAID SPECIALIST</span><div class="mabil p">ABILITY: NODE HACK<br>Disables enemy defense 30min<br>Cooldown: 6 hours</div>'},
+  'cls-legend':{title:'VOIDLURK',sprId:'spr4',sprPal:{body:'#111',hi:'#2a2a2a',dark:'#000',eye:'#ffec27',horn:'#111'},stats:{STEALTH:100,SPEED:90,RAID:95,DEFENSE:85},sc:'#ffec27',html:'<div class="minfo">A Lurker so evolved it has consumed its own visible spectrum — appearing as pure <em>void with glowing eyes</em>.<br><br><strong>Invisible once per day.</strong> Cannot be countered by anything below Epic class.</div><div class="msep"></div><span class="mtag y">LEGENDARY</span><span class="mtag y">APEX PREDATOR</span><span class="mtag r">UNCOUNTERABLE</span><div class="mabil y">ABILITY: VOID CLOAK<br>Full invisibility 1x/day<br>Cannot be targeted while active</div>'},
+  'road-1':{title:'PHASE 01 - SIGNAL DETECTED',html:'<div class="minfo"><strong>STATUS: COMPLETE</strong><br><br>The first signal from Verdanex has been detected. PIXELURK exists. The lore is written. The art is drawn.</div><div class="msep"></div><div class="minfo">&#10004; World concept and lore finalized<br>&#10004; Pixel art character designed<br>&#10004; Twitter/X community launched<br>&#10004; Telegram and Discord opened<br>&#10004; Website deployed</div><span class="mtag g">DONE</span>'},
+  'road-2':{title:'PHASE 02 - ENTER THE FOREST',html:'<div class="minfo"><strong>STATUS: NOW LIVE</strong><br><br>The forest is open. $LURK is live on <em>Solana</em>. Early lurkers are staking their positions.</div><div class="msep"></div><div class="minfo">&#9654; $LURK SPL token launched on Solana<br>&#9654; Website and whitepaper live<br>&#9203; First community airdrop (Solana wallets)<br>&#9203; Listed on Jupiter &amp; Raydium<br>&#9203; CoinGecko and CMC listing</div><span class="mtag y">IN PROGRESS</span><div class="mabil g">NETWORK: SOLANA ◎<br>DEX: JUPITER / RAYDIUM<br>WALLET: PHANTOM / SOLFLARE</div>'},
+  'road-3':{title:'PHASE 03 - VERDANEX ALPHA',html:'<div class="minfo"><strong>STATUS: COMING SOON</strong><br><br>The game itself launches. Lurkers become on-chain assets. Zones open. The hunt begins.</div><div class="msep"></div><div class="minfo">&#9633; On-chain Lurker NFT minting<br>&#9633; Staking system deployed<br>&#9633; Fernwood Depths live<br>&#9633; Glitch Canopy unlocked<br>&#9633; Evolution burn mechanic</div><span class="mtag c">UPCOMING</span>'},
+  'road-4':{title:'PHASE 04 - FULL LURK MODE',html:'<div class="minfo"><strong>STATUS: FUTURE</strong><br><br>Full PvP, deepest zones, and the Voidlurk legendary event. Only the strongest survive.</div><div class="msep"></div><div class="minfo">&#9633; PvP Raid system live<br>&#9633; The Dead Nodes zone<br>&#9633; The Core unlocked<br>&#9633; Governance voting<br>&#9633; Voidlurk legendary drop event<br>&#9633; Mobile app launch</div><span class="mtag p">FUTURE</span>'}
+};
+
+function openModal(id){
+  var m=MODALS[id];if(!m)return;
+  document.getElementById('modal-title').textContent=m.title;
+  var body=m.html||'';
+  if(m.sprId&&m.sprPal&&m.stats){
+    var cid='ms'+Date.now();
+    var statHtml='<div class="msep"></div>';
+    Object.keys(m.stats).forEach(function(k){
+      statHtml+='<div class="mstat-row"><div class="mstat-label">'+k+'</div><div class="mstat-bg"><div class="mstat-fill" style="width:'+m.stats[k]+'%;background:'+m.sc+'"></div></div><div class="mstat-val">'+m.stats[k]+'%</div></div>';
+    });
+    document.getElementById('modal-body').innerHTML='<canvas id="'+cid+'" class="m-spr" width="16" height="16"></canvas>'+body+statHtml;
+    var sc=document.getElementById(cid);
+    sc.width=16;sc.height=16;
+    drawLurker(sc.getContext('2d'),1,0,m.sprPal);
+  } else {
+    document.getElementById('modal-body').innerHTML=body;
+  }
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeModal(e,force){
+  if(force||(e&&e.target===document.getElementById('modal-overlay'))){
+    document.getElementById('modal-overlay').classList.remove('open');
+    document.body.style.overflow='';
+  }
+}
+
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal(null,true)});
+
+// BURGER MENU
+function toggleMenu(){
+  var b=document.getElementById('nav-burger');
+  var m=document.getElementById('nav-menu');
+  b.classList.toggle('open');
+  m.classList.toggle('open');
+}
+function closeMenu(){
+  document.getElementById('nav-burger').classList.remove('open');
+  document.getElementById('nav-menu').classList.remove('open');
+}
+function navTo(id){
+  closeMenu();
+  // slight delay so menu closes before scroll
+  setTimeout(function(){
+    var el=document.getElementById(id);
+    if(!el) return;
+    var offset=el.getBoundingClientRect().top + window.scrollY - 56;
+    window.scrollTo({top:offset, behavior:'smooth'});
+  }, 80);
+  return false;
+}
+// close menu when clicking outside
+document.addEventListener('click',function(e){
+  var b=document.getElementById('nav-burger');
+  var m=document.getElementById('nav-menu');
+  if(b && m && !b.contains(e.target)&&!m.contains(e.target)){
+    b.classList.remove('open');
+    m.classList.remove('open');
+  }
+});
+</script>
+</body>
+</html>
